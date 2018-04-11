@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import ed.mse.service.response.ResponsePath;
+import net.minidev.json.JSONObject;
 
 @RestController
 public class BaseController {
@@ -20,5 +21,11 @@ public class BaseController {
 
 		return service.getPath(start, end);
 	}
+	
+	@RequestMapping(value = "/helloworld")
+	public String path() { 
+		return service.helloworld();
+	}
+	
 	
 }

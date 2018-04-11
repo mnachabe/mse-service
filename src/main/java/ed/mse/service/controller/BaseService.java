@@ -6,6 +6,9 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultWeightedEdge;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import ed.mse.commons.GraphRequest;
@@ -38,6 +41,41 @@ public class BaseService {
 		ResponsePath path = new ResponsePath();
 		path.setPath(vertecies);
 		return path;
+	}
+	
+	public String helloworld() {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("type", "FeatureCollection");
+			
+			JSONArray features = new JSONArray();
+			JSONObject featuresList = new JSONObject();
+			featuresList.put("type", "Feature");
+			JSONObject properties = new JSONObject();
+			properties.put("name", "Crema to Council Crest");
+			featuresList.put("properties", properties);
+			JSONObject geometry = new JSONObject();
+			geometry.put("type", "LineString");
+			
+			JSONArray coordinates = new JSONArray();
+			JSONArray coordinates1 = new JSONArray();
+			coordinates1.put(-122.63748);
+			coordinates1.put(45.52214);
+			
+			JSONArray coordinates2 = new JSONArray();
+			coordinates2.put(-122.64855);
+			coordinates2.put(45.52218);
+			
+			coordinates.put(coordinates1);
+			coordinates.put(coordinates2);
+			geometry.put("coordinates", coordinates);
+			featuresList.put("geometry", geometry);
+			features.put(featuresList);
+			json.put("features", features);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return json.toString();
 	}
 
 }

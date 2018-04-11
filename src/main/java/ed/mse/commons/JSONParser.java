@@ -59,5 +59,47 @@ public class JSONParser extends Parser {
 		
 		return g;
 	}	
+	
+	public class GraphNode {
+		
+		private String id; 
+		
+		private double longitude; 
+		
+		private double latitude;
+		
+		public GraphNode(String id, double longitude, double latitude) {
+			this.id = id; 
+			this.longitude = longitude;
+			this.latitude = latitude;
+		}
+		
+		public String getId() {
+			return id;
+		}
+		public void setId(String id) {
+			this.id = id;
+		}
+		public double getLongitude() {
+			return longitude;
+		}
+		public void setLongitude(double longitude) {
+			this.longitude = longitude;
+		}
+		public double getLatitude() {
+			return latitude;
+		}
+		public void setLatitude(double latitude) {
+			this.latitude = latitude;
+		}
+		
+		@Override
+		public boolean equals(Object arg0) {
+			return super.equals(arg0.toString());
+		} 
+		
+		
+		
+	}
 
 }
