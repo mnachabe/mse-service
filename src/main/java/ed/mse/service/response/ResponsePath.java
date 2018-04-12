@@ -2,15 +2,17 @@ package ed.mse.service.response;
 
 import java.util.List;
 
+import ed.mse.commons.MapNode;
+
 public class ResponsePath {
 	
-	private List<String> path;
+	private List<MapNode> path;
 
-	public List<String> getPath() {
+	public List<MapNode> getPath() {
 		return path;
 	}
 
-	public void setPath(List<String> path) {
+	public void setPath(List<MapNode> path) {
 		this.path = path;
 	}
 

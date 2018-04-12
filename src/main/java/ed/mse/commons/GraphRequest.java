@@ -3,6 +3,7 @@ package ed.mse.commons;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -23,6 +24,7 @@ public class GraphRequest {
 	private double longitude2;
 	private String outputFormat; 
 	private boolean debugMode;
+	private HashMap<Long, MapNode> hash = new HashMap<Long, MapNode>(); 
 	
 	private GraphRequest(String outputFormat, double latitude1, double longitude1, double latitude2, double longitude2, boolean footway, boolean debugMode) { 
 		api = new OverPassApiImpl();
@@ -34,7 +36,7 @@ public class GraphRequest {
 		this.debugMode = debugMode;
 	}
 	
-	public Graph<String, DefaultWeightedEdge> execute() {
+	public Graph<MapNode, DefaultWeightedEdge> execute() {
 		
 		String query = "[out:".concat(outputFormat).concat("];(way(?,?,?,?)[highway];);(._;>;);out meta;");
 		
@@ -67,7 +69,12 @@ public class GraphRequest {
 		}
 		
 		JSONParser parser = new JSONParser();
-		return parser.parse(result);	
+		
+		Graph<MapNode, DefaultWeightedEdge> r = parser.parse(result);
+		hash = parser.getHash();
+		
+		return r;
+		
 	}
 	
 	public static class Builder {
@@ -118,5 +125,11 @@ public class GraphRequest {
 			return new GraphRequest(outputFormat, latitude1, longitude1, latitude2, longitude2, footway, debugMode);
 		}
 	}
+
+	public HashMap<Long, MapNode> getHash() {
+		return hash;
+	}
+	
+	
 	
 }

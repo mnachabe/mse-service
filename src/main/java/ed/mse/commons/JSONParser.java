@@ -13,14 +13,14 @@ import org.json.JSONObject;
  *
  */
 public class JSONParser extends Parser {
+	private HashMap<Long, MapNode> hash = new HashMap<Long, MapNode>(); 
 
-	public Graph<String, DefaultWeightedEdge> parse(String result) {
-		Graph<String, DefaultWeightedEdge> g = new SimpleWeightedGraph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+	public Graph<MapNode, DefaultWeightedEdge> parse(String result) {
+		Graph<MapNode, DefaultWeightedEdge> g = new SimpleWeightedGraph<MapNode, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		Logger.getLogger().log("Generating Graph");
 		try {
 			JSONObject root = new JSONObject(result);
 			JSONArray elements = root.getJSONArray("elements");
-			HashMap<Long, MapNode> hash = new HashMap<Long, MapNode>(); 
 			
 			for(int i=0; i < elements.length(); i++) {
 				JSONObject o = elements.getJSONObject(i);
@@ -34,12 +34,12 @@ public class JSONParser extends Parser {
 				} else if(o.getString("type").equals("way")) {
 					JSONArray nodes = o.getJSONArray("nodes");
 					Long lastNodeId = nodes.getLong(0);
-					g.addVertex(String.valueOf(lastNodeId));
+					g.addVertex(hash.get(lastNodeId));
 					for(int j=1; j < nodes.length(); j++) {
 						Long nodeId = nodes.getLong(j);
-						g.addVertex(String.valueOf(nodeId));
+						g.addVertex(hash.get(nodeId));
 						MapNode node1 = hash.get(nodeId), node2 = hash.get(lastNodeId);
-						DefaultWeightedEdge e = g.addEdge(String.valueOf(node1.getId()), String.valueOf(node2.getId()));
+						DefaultWeightedEdge e = g.addEdge(node1, node2);
 						if(e == null) {
 							continue;
 						}
@@ -58,48 +58,12 @@ public class JSONParser extends Parser {
 		}
 		
 		return g;
-	}	
-	
-	public class GraphNode {
-		
-		private String id; 
-		
-		private double longitude; 
-		
-		private double latitude;
-		
-		public GraphNode(String id, double longitude, double latitude) {
-			this.id = id; 
-			this.longitude = longitude;
-			this.latitude = latitude;
-		}
-		
-		public String getId() {
-			return id;
-		}
-		public void setId(String id) {
-			this.id = id;
-		}
-		public double getLongitude() {
-			return longitude;
-		}
-		public void setLongitude(double longitude) {
-			this.longitude = longitude;
-		}
-		public double getLatitude() {
-			return latitude;
-		}
-		public void setLatitude(double latitude) {
-			this.latitude = latitude;
-		}
-		
-		@Override
-		public boolean equals(Object arg0) {
-			return super.equals(arg0.toString());
-		} 
-		
-		
-		
 	}
 
+	public HashMap<Long, MapNode> getHash() {
+		return hash;
+	}	
+	
+	
+	
 }

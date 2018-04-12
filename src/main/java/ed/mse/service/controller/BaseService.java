@@ -13,12 +13,13 @@ import org.springframework.stereotype.Service;
 
 import ed.mse.commons.GraphRequest;
 import ed.mse.commons.Logger;
+import ed.mse.commons.MapNode;
 import ed.mse.service.response.ResponsePath;
 
 @Service
 public class BaseService {
 	
-	public ResponsePath getPath(String start, String end) { 
+	public String getPath() { 
 		Logger.getLogger().log("Starting...");
 		
 		GraphRequest mapRequest = new GraphRequest.Builder()
@@ -28,22 +29,24 @@ public class BaseService {
 				.setEndLatitude(55.9421)
 				.setEndLongitude(-3.1683)
 				.setFootway(true)
-				.debugMode(true)
+				.debugMode(false)
 				.build();
 		
-		Graph<String, DefaultWeightedEdge> graph = mapRequest.execute();
+		Graph<MapNode, DefaultWeightedEdge> graph = mapRequest.execute();
 
-//		String startNode = "4042155730", endNode = "13881929";
-		Logger.getLogger().log("Finding shortest path between ".concat(start).concat(" and ").concat(end));
-		GraphPath<String, DefaultWeightedEdge> findPathBetween = DijkstraShortestPath.findPathBetween(graph, start, end);
+		long start = 4042155730L, end = 13881929;
+		Logger.getLogger().log("Finding shortest path between ".concat(String.valueOf(start)).concat(" and ").concat(String.valueOf(end)));
 		
-		List<String> vertecies = findPathBetween.getVertexList();
-		ResponsePath path = new ResponsePath();
-		path.setPath(vertecies);
-		return path;
+		GraphPath<MapNode, DefaultWeightedEdge> findPathBetween = DijkstraShortestPath.findPathBetween(graph, mapRequest.getHash().get(start), mapRequest.getHash().get(end));
+		
+		List<MapNode> vertecies = findPathBetween.getVertexList();
+//		ResponsePath path = new ResponsePath();
+//		path.setPath(vertecies);
+		
+		return getCoordinatesList(vertecies);
 	}
 	
-	public String helloworld() {
+	public String getCoordinatesList(List<MapNode> vertecies) {
 		JSONObject json = new JSONObject();
 		try {
 			json.put("type", "FeatureCollection");
@@ -52,22 +55,20 @@ public class BaseService {
 			JSONObject featuresList = new JSONObject();
 			featuresList.put("type", "Feature");
 			JSONObject properties = new JSONObject();
-			properties.put("name", "Crema to Council Crest");
+			properties.put("name", "Edinburgh");
 			featuresList.put("properties", properties);
 			JSONObject geometry = new JSONObject();
 			geometry.put("type", "LineString");
 			
 			JSONArray coordinates = new JSONArray();
-			JSONArray coordinates1 = new JSONArray();
-			coordinates1.put(-122.63748);
-			coordinates1.put(45.52214);
 			
-			JSONArray coordinates2 = new JSONArray();
-			coordinates2.put(-122.64855);
-			coordinates2.put(45.52218);
+			for(MapNode v : vertecies) {
+				JSONArray c = new JSONArray();
+				c.put(v.getLongitude());
+				c.put(v.getLatitude());
+				coordinates.put(c);
+			}
 			
-			coordinates.put(coordinates1);
-			coordinates.put(coordinates2);
 			geometry.put("coordinates", coordinates);
 			featuresList.put("geometry", geometry);
 			features.put(featuresList);

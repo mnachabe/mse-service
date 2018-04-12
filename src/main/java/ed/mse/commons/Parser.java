@@ -9,6 +9,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  */
 public abstract class Parser {
 	
-	public abstract Graph<String, DefaultWeightedEdge> parse(String result);
+	public abstract Graph<MapNode, DefaultWeightedEdge> parse(String result);
 
 }
