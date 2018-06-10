@@ -13,8 +13,8 @@ public class Graph {
 	public class Edge {
 		Node src; 
 		Node dest; 
-		int weight;
-		public Edge(Node src, Node dest, int weight) {
+		double weight;
+		public Edge(Node src, Node dest, double weight) {
 			this.src = src; 
 			this.dest = dest;
 			this.weight = weight;
@@ -24,9 +24,14 @@ public class Graph {
 	public class Node {
 	    String label;
 	    ArrayList<Edge> edges = new ArrayList<>();
+	    ArrayList<Integer> hashcodes = new ArrayList<>();
 	    ArrayList<Node> neighbours = new ArrayList<>();
-	    private Node(String label) {
+	    double latitude;
+	    double longitude;
+	    private Node(String label, double latitude, double longitude) {
 	    	this.label = label;
+	    	this.latitude = latitude;
+	    	this.longitude = longitude;
 	    }
 	    
 	    public ArrayList<Edge> getUnvisitedEdges(Set<String> visited) {
@@ -52,31 +57,42 @@ public class Graph {
 	    }
 	}
 	
-	boolean addNode(String n) {
+	public boolean addNode(String n, double latitude, double longitude) {
 		if(nodeLookup.containsKey(n)) {
 			return false;
 		}
-		nodeLookup.put(n, new Node(n));
+		nodeLookup.put(n, new Node(n, latitude, longitude));
 		return true;
 	}
 	
 
-	void addEdge(String v1, String v2, int weight) {
+	public void addEdge(String v1, String v2, double weight) {
 		Node src = nodeLookup.get(v1);
 		Node dest = nodeLookup.get(v2);
 		Edge srcEdge = new Edge(src, dest, weight);
 		Edge destEdge = new Edge(dest, src, weight);
+		
+		if(src.hashcodes.contains(v1.concat(v2).hashCode()) || src.hashcodes.contains(v2.concat(v1).hashCode())
+				|| dest.hashcodes.contains(v1.concat(v2).hashCode()) || dest.hashcodes.contains(v2.concat(v1).hashCode())) {
+			return;
+		}
+		 
 		src.edges.add(srcEdge);
 		dest.edges.add(destEdge);
 		src.neighbours.add(dest);
 		dest.neighbours.add(src);
+		
+		src.hashcodes.add(v1.concat(v2).hashCode());
+		src.hashcodes.add(v2.concat(v1).hashCode());
+		dest.hashcodes.add(v2.concat(v1).hashCode());
+		dest.hashcodes.add(v1.concat(v2).hashCode());
 	}
 	
 	Set<String> getVertices() {
 		return nodeLookup.keySet();
 	}
 	
-	void print() {
+	public void print() {
 		Iterator<String> iterator = nodeLookup.keySet().iterator();
 		while(iterator.hasNext()) {
 			Node node = nodeLookup.get(iterator.next());

@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import ed.mse.graph.Graph;
 
 /**
  * @author Mohamad Nachabe
@@ -36,7 +35,7 @@ public class GraphRequest {
 		this.debugMode = debugMode;
 	}
 	
-	public Graph<MapNode, DefaultWeightedEdge> execute() {
+	public Graph execute() {
 		
 		String query = "[out:".concat(outputFormat).concat("];(way(?,?,?,?)[highway];);(._;>;);out meta;");
 		
@@ -70,7 +69,7 @@ public class GraphRequest {
 		
 		JSONParser parser = new JSONParser();
 		
-		Graph<MapNode, DefaultWeightedEdge> r = parser.parse(result);
+		Graph r = parser.parse(result);
 		hash = parser.getHash();
 		
 		return r;

@@ -1,7 +1,6 @@
 package ed.mse.commons;
 
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultWeightedEdge;
+import ed.mse.graph.Graph;
 
 /**
  * @author Mohamad Nachabe
@@ -9,6 +8,6 @@ import org.jgrapht.graph.DefaultWeightedEdge;
  */
 public abstract class Parser {
 	
-	public abstract Graph<MapNode, DefaultWeightedEdge> parse(String result);
+	public abstract Graph parse(String result);
 
 }

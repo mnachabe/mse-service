@@ -1,11 +1,9 @@
 package ed.mse.service.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +12,9 @@ import org.springframework.stereotype.Service;
 import ed.mse.commons.GraphRequest;
 import ed.mse.commons.Logger;
 import ed.mse.commons.MapNode;
+import ed.mse.graph.Dijkstra;
+import ed.mse.graph.Graph;
+import ed.mse.graph.RandomWalk;
 
 @Service
 public class BaseService {
@@ -31,16 +32,20 @@ public class BaseService {
 				.debugMode(false)
 				.build();
 		
-		Graph<MapNode, DefaultWeightedEdge> graph = mapRequest.execute();
+		Graph graph = mapRequest.execute();
 
 		long start = 4042155730L, end = 13881929;
 		Logger.getLogger().log("Finding shortest path between ".concat(String.valueOf(start)).concat(" and ").concat(String.valueOf(end)));
 		
-		GraphPath<MapNode, DefaultWeightedEdge> findPathBetween = DijkstraShortestPath.findPathBetween(graph, mapRequest.getHash().get(start), mapRequest.getHash().get(end));
+//		ArrayList<String> walk = RandomWalk.walk(String.valueOf(start), String.valueOf(end), 100000, graph);
 		
-		List<MapNode> vertecies = findPathBetween.getVertexList();
-//		ResponsePath path = new ResponsePath();
-//		path.setPath(vertecies);
+		ArrayList<String> walk = Dijkstra.generatePath(String.valueOf(start), String.valueOf(end), graph);
+		
+		System.out.println(Arrays.toString(walk.toArray()));
+		
+		List<MapNode> vertecies = RandomWalk.getDetails(walk, graph);
+		/*ResponsePath path = new ResponsePath();
+		path.setPath(vertecies);*/
 		
 		return getCoordinatesList(vertecies);
 	}

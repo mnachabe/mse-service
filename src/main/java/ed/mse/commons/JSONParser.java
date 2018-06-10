@@ -2,11 +2,10 @@ package ed.mse.commons;
 
 import java.util.HashMap;
 
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleWeightedGraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import ed.mse.graph.Graph;
 
 /**
  * @author Mohamad Nachabe
@@ -15,8 +14,8 @@ import org.json.JSONObject;
 public class JSONParser extends Parser {
 	private HashMap<Long, MapNode> hash = new HashMap<Long, MapNode>(); 
 
-	public Graph<MapNode, DefaultWeightedEdge> parse(String result) {
-		Graph<MapNode, DefaultWeightedEdge> g = new SimpleWeightedGraph<MapNode, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+	public Graph parse(String result) {
+		Graph g = new Graph();
 		Logger.getLogger().log("Generating Graph");
 		try {
 			JSONObject root = new JSONObject(result);
@@ -34,17 +33,18 @@ public class JSONParser extends Parser {
 				} else if(o.getString("type").equals("way")) {
 					JSONArray nodes = o.getJSONArray("nodes");
 					Long lastNodeId = nodes.getLong(0);
-					g.addVertex(hash.get(lastNodeId));
+					MapNode mapNode = hash.get(lastNodeId);
+					g.addNode(String.valueOf(mapNode.getId()), mapNode.getLatitude(), mapNode.getLongitude());
 					for(int j=1; j < nodes.length(); j++) {
 						Long nodeId = nodes.getLong(j);
-						g.addVertex(hash.get(nodeId));
+						MapNode m = hash.get(nodeId);
+						g.addNode(String.valueOf(m.getId()), m.getLatitude(), m.getLongitude());
 						MapNode node1 = hash.get(nodeId), node2 = hash.get(lastNodeId);
-						DefaultWeightedEdge e = g.addEdge(node1, node2);
-						if(e == null) {
-							continue;
-						}
 						double distance = MathUtils.haversine(node1.getLatitude(), node1.getLongitude(), node2.getLatitude(), node2.getLongitude());
-						g.setEdgeWeight(e, distance);
+						g.addEdge(String.valueOf(node1.getId()), String.valueOf(node2.getId()), distance);
+//						if(e == null) {
+//							continue;
+//						}
 						lastNodeId = nodeId;
 					}
 				}

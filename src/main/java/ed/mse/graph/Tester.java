@@ -7,19 +7,19 @@ public class Tester {
 	public static void main(String[] args) {
 		ed.mse.graph.Graph g = new ed.mse.graph.Graph();
 		
-		g.addNode("S");
-		g.addNode("A");
-		g.addNode("B");
-		g.addNode("C");
-		g.addNode("D");
-		g.addNode("E");
-		g.addNode("F");
-		g.addNode("G");
-		g.addNode("H");
-		g.addNode("I");
-		g.addNode("J");
-		g.addNode("K");
-		g.addNode("L");
+		g.addNode("S", 0, 0);
+		g.addNode("A", 0, 0);
+		g.addNode("B", 0, 0);
+		g.addNode("C", 0, 0);
+		g.addNode("D", 0, 0);
+		g.addNode("E", 0, 0);
+		g.addNode("F", 0, 0);
+		g.addNode("G", 0, 0);
+		g.addNode("H", 0, 0);
+		g.addNode("I", 0, 0);
+		g.addNode("J", 0, 0);
+		g.addNode("K", 0, 0);
+		g.addNode("L", 0, 0);
 		
 		g.addEdge("S", "A", 7);
 		g.addEdge("S", "B", 2);
@@ -40,10 +40,13 @@ public class Tester {
 		g.addEdge("I", "K", 4);
 		g.addEdge("J", "K", 4);
 		
-		String start = "S", end = "E";
-		int threshold = 10;
+		g.print();
 		
-		RandomWalk.walk(start, end, threshold, g);
+		String start = "S", end = "E";
+		int threshold = 25;
+		
+//		Dijkstra.calculate(start, end, g);
+//		RandomWalk.walk(start, end, threshold, g);
 		
 	}
 	
