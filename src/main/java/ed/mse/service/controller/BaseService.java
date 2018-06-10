@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import ed.mse.commons.GraphRequest;
 import ed.mse.commons.Logger;
 import ed.mse.commons.MapNode;
-import ed.mse.service.response.ResponsePath;
 
 @Service
 public class BaseService {
