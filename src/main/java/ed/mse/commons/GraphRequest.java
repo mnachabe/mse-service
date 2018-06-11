@@ -50,7 +50,7 @@ public class GraphRequest {
 		
 		if(debugMode) {
 			Logger.getLogger().log("Debug mode");
-			query = query.replace(OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_XML);
+			query = query.replace(OUTPUT_FORMAT_JSON, OUTPUT_FORMAT_JSON);
 			String r = api.callQuery(query);
 			
 		    FileWriter fileWriter;
@@ -128,7 +128,5 @@ public class GraphRequest {
 	public HashMap<Long, MapNode> getHash() {
 		return hash;
 	}
-	
-	
 	
 }

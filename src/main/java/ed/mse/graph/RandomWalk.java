@@ -13,47 +13,60 @@ import ed.mse.graph.Graph.Node;
 
 public class RandomWalk {
 	
-	public static ArrayList<String> walk(String start, String end, int threshold, Graph g) {
+	public static ArrayList<String> walk(String start, String end, Graph g) {
 
 		Node node = g.nodeLookup.get(start);
 		Set<String> visited = new HashSet<String>();
+		Set<String> deadend = new HashSet<String>();
 		ArrayList<String> result = new ArrayList<>();
 		result.add(start);
 		int travelledDistance = 0;
-		boolean rollbackFlag;
-		Stack<Node> stack = new Stack<Node>();
+		boolean rollbackFlag = false;
+		Stack<Node> rollbackStack = new Stack<Node>();
+		
+		int threshold = (int) (5 * Dijkstra.calculate(start, end, g));
 		
 		while(!node.label.equals(end)) {
-			double distance = 0;
+			double distance = 0.0;
 			Edge e = null;
 			int count = 0;
 			visited.add(node.label);
 			do {
-				rollbackFlag = false;
 				try {
 					do {
-						e = node.getUnvisitedRandomEdge(visited);
+						rollbackFlag = false;
+						e = node.getUnvisitedRandomEdge(visited, deadend);
 						distance = Dijkstra.calculate(e.dest.label, end, g);
 						count++;
-					} while((distance + travelledDistance)  > threshold && count < node.getUnvisitedEdges(visited).size()*2 || rollbackFlag);
+					} while((distance + travelledDistance)  > threshold && count < node.getUnvisitedEdges(visited).size()*4);
 				} catch(Exception ex) {
-					rollbackFlag = true;
-					String pop = stack.pop().label;
-					result.remove(pop);
-					visited.remove(pop);
-					node= stack.peek();
 					ex.printStackTrace();
+					rollbackFlag = true;
+					if(!rollbackStack.isEmpty()) {
+						Node pop2 = rollbackStack.pop();
+						String pop = pop2.label;
+						result.remove(pop);
+						visited.remove(pop);
+						deadend.add(node.label);
+						
+						if(!rollbackStack.isEmpty()) {
+							node= rollbackStack.peek();
+						} else {
+							node = g.nodeLookup.get(start);
+						}
+					} else {
+						break;
+					}
 				}
 			} while(rollbackFlag);
 			
 			rollbackFlag = false;
 			node = e.dest;
-			travelledDistance += e.weight;
-			stack.push(node);
+			rollbackStack.push(node);
 			result.add(node.label);
+			travelledDistance += e.weight;
 			System.out.println(node.label);
 		}
-
 		
 		for(String s : result) {
 			System.out.print(s+" ");
@@ -65,12 +78,14 @@ public class RandomWalk {
 
 	public static List<MapNode> getDetails(ArrayList<String> walk, Graph graph) {
 		ArrayList<MapNode> result = new ArrayList<>();
-		Iterator<String> keySet = graph.nodeLookup.keySet().iterator();
-		while(keySet.hasNext()) {
-			Node node = graph.nodeLookup.get(keySet.next());
-			if(walk.contains(node.label)) {
-				MapNode m = new MapNode(Long.parseLong(node.label), node.latitude, node.longitude);
-				result.add(m);
+		for(String s : walk) {
+			Iterator<String> keySet = graph.nodeLookup.keySet().iterator();
+			while(keySet.hasNext()) {
+				Node node = graph.nodeLookup.get(keySet.next());
+				if(s.equals(node.label)) {
+					MapNode m = new MapNode(Long.parseLong(node.label), node.latitude, node.longitude);
+					result.add(m);
+				}
 			}
 		}
 		return result;

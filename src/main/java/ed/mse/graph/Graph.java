@@ -9,6 +9,7 @@ import java.util.Set;
 public class Graph {
 	
 	public HashMap<String, Node> nodeLookup = new HashMap<String, Node>();
+	public int edgeCount = 0;
 	
 	public class Edge {
 		Node src; 
@@ -24,7 +25,7 @@ public class Graph {
 	public class Node {
 	    String label;
 	    ArrayList<Edge> edges = new ArrayList<>();
-	    ArrayList<Integer> hashcodes = new ArrayList<>();
+	    ArrayList<String> hashcodes = new ArrayList<>();
 	    ArrayList<Node> neighbours = new ArrayList<>();
 	    double latitude;
 	    double longitude;
@@ -44,10 +45,14 @@ public class Graph {
 			return result;
 	    }
 	    
-	    public Edge getUnvisitedRandomEdge(Set<String> visited) {
+	    public ArrayList<Edge> getEdges() {
+			return edges;
+	    }
+	    
+	    public Edge getUnvisitedRandomEdge(Set<String> visited, Set<String> deadend) {
 	    	ArrayList<Edge> result = new ArrayList<>();
 	    	for(Edge e : edges) {
-	    		if(!visited.contains(e.dest.label)) {
+	    		if(!visited.contains(e.dest.label) && !deadend.contains(e.dest.label)) {
 	    			result.add(e);
 	    		}
 	    	}
@@ -72,37 +77,36 @@ public class Graph {
 		Edge srcEdge = new Edge(src, dest, weight);
 		Edge destEdge = new Edge(dest, src, weight);
 		
-		if(src.hashcodes.contains(v1.concat(v2).hashCode()) || src.hashcodes.contains(v2.concat(v1).hashCode())
-				|| dest.hashcodes.contains(v1.concat(v2).hashCode()) || dest.hashcodes.contains(v2.concat(v1).hashCode())) {
+		if(src.hashcodes.contains(v1.concat(v2)) || dest.hashcodes.contains(v2.concat(v1))) {
 			return;
 		}
-		 
+		edgeCount++;
 		src.edges.add(srcEdge);
 		dest.edges.add(destEdge);
 		src.neighbours.add(dest);
 		dest.neighbours.add(src);
 		
-		src.hashcodes.add(v1.concat(v2).hashCode());
-		src.hashcodes.add(v2.concat(v1).hashCode());
-		dest.hashcodes.add(v2.concat(v1).hashCode());
-		dest.hashcodes.add(v1.concat(v2).hashCode());
+		src.hashcodes.add(v1.concat(v2));
+		dest.hashcodes.add(v2.concat(v1));
 	}
 	
-	Set<String> getVertices() {
+	public Set<String> getVertices() {
 		return nodeLookup.keySet();
 	}
 	
-	public void print() {
+	public String print() {
+		StringBuffer buffer = new StringBuffer();
 		Iterator<String> iterator = nodeLookup.keySet().iterator();
 		while(iterator.hasNext()) {
 			Node node = nodeLookup.get(iterator.next());
-			System.out.print(node.label + ": ");
+			buffer.append(node.label + ": ");
 			ArrayList<Edge> edges = node.edges;
 			for(Edge e : edges) {
-				System.out.print("("+e.dest.label+","+e.weight+") ");
+				buffer.append("("+e.dest.label+","+e.weight+") ");
 			}
-			System.out.println();
+			buffer.append("\n");
 		}
+		return buffer.toString();
 	}
 	
 }

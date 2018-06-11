@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import ed.mse.commons.GraphRequest;
 import ed.mse.commons.Logger;
 import ed.mse.commons.MapNode;
-import ed.mse.graph.Dijkstra;
 import ed.mse.graph.Graph;
 import ed.mse.graph.RandomWalk;
 
@@ -29,7 +28,7 @@ public class BaseService {
 				.setEndLatitude(55.9421)
 				.setEndLongitude(-3.1683)
 				.setFootway(true)
-				.debugMode(false)
+				.debugMode(true)
 				.build();
 		
 		Graph graph = mapRequest.execute();
@@ -37,9 +36,9 @@ public class BaseService {
 		long start = 4042155730L, end = 13881929;
 		Logger.getLogger().log("Finding shortest path between ".concat(String.valueOf(start)).concat(" and ").concat(String.valueOf(end)));
 		
-//		ArrayList<String> walk = RandomWalk.walk(String.valueOf(start), String.valueOf(end), 100000, graph);
+		ArrayList<String> walk = RandomWalk.walk(String.valueOf(start), String.valueOf(end), graph);
 		
-		ArrayList<String> walk = Dijkstra.generatePath(String.valueOf(start), String.valueOf(end), graph);
+//		ArrayList<String> walk = Dijkstra.generateRandomPath(String.valueOf(start), String.valueOf(end), graph);
 		
 		System.out.println(Arrays.toString(walk.toArray()));
 		
